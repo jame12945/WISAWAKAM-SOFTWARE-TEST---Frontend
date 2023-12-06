@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
@@ -15,6 +17,20 @@ class SignUpWidget extends StatefulWidget {
 }
 
 class SignUpWidgetWidgetState extends State<SignUpWidget> {
+  // String? user_username;
+  // String? user_password;
+  // String? user_fname;
+  // String? user_lname;
+  // Int? user_citizenId;
+  // String? user_phone;
+  TextEditingController user_username = TextEditingController();
+  TextEditingController user_password = TextEditingController();
+  TextEditingController user_fname = TextEditingController();
+  TextEditingController user_lname = TextEditingController();
+  TextEditingController user_citizenId = TextEditingController();
+  TextEditingController user_phone = TextEditingController();
+
+
   File? _image;
   Future<void> _getImage() async {
     final picker = ImagePicker();
@@ -64,7 +80,38 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
       print('Failed to upload image. Status code: ${response.statusCode}');
     }
   }
+  void Register() async {
 
+    final nodeUrl = Uri.parse('http://10.0.2.2:3333/register');
+    final Map<String, dynamic> UserData = {
+      "user_username": user_username.text,
+      "user_password": user_password.text,
+      "user_fname": user_fname.text,
+      "user_lname": user_lname.text,
+      "user_citizenid":user_citizenId.text,
+      "user_phone":user_phone.text ,
+      //"File": ,
+
+
+    };
+
+    final response = await http.post(
+      nodeUrl,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(UserData),
+    );
+
+    if (response.statusCode == 200) {
+      // บันทึกข้อมูลสำเร็จ
+
+      print('Register สำเร็จ ');
+    } else {
+      print('Register ไม่สำเร็จ: ${response.statusCode}');
+    }
+
+  }
   @override
   Widget build(BuildContext context) {
     Color customColor = Color(0xCCEFEEEE);
@@ -91,7 +138,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                      Padding(
                        padding: const EdgeInsets.symmetric(vertical: 20.0),
                        child: Text(
-                         'Sign Up',
+                         'Register',
                          style:TextStyle(
                              fontSize: 28,
                              fontWeight: FontWeight.bold
@@ -107,6 +154,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          style: TextStyle(
                              color: Colors.black
                          ),
+                         controller: user_username,
                          decoration: InputDecoration(
                            hintText: 'Username', // ข้อความตัวอย่างในช่องใส่ข้อความ
                            border: OutlineInputBorder(
@@ -126,6 +174,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          style: TextStyle(
                              color: Colors.black
                          ),
+                         controller: user_password,
                          decoration: InputDecoration(
                              hintText: 'Password', // ข้อความตัวอย่างในช่องใส่ข้อความ
                              border: OutlineInputBorder(
@@ -144,6 +193,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          style: TextStyle(
                              color: Colors.black
                          ),
+                         controller: user_fname,
                          decoration: InputDecoration(
                              hintText: 'ชื่อผู้ใช้', // ข้อความตัวอย่างในช่องใส่ข้อความ
                              border: OutlineInputBorder(
@@ -163,6 +213,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          style: TextStyle(
                              color: Colors.black
                          ),
+                           controller:user_lname,
                          decoration: InputDecoration(
                              hintText: 'นามสกุล', // ข้อความตัวอย่างในช่องใส่ข้อความ
                              border: OutlineInputBorder(
@@ -180,6 +231,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          style: TextStyle(
                              color: Colors.black
                          ),
+                         controller:user_citizenId,
                          decoration: InputDecoration(
                              hintText: 'เลขบัตรประชาชน', // ข้อความตัวอย่างในช่องใส่ข้อความ
                              border: OutlineInputBorder(
@@ -197,6 +249,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          style: TextStyle(
                              color: Colors.black
                          ),
+                         controller:user_phone,
                          decoration: InputDecoration(
                              hintText: 'เบอร์ติดต่อ', // ข้อความตัวอย่างในช่องใส่ข้อความ
                              border: OutlineInputBorder(
@@ -227,6 +280,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          margin: EdgeInsets.only(top: 30.0),
                          child: ElevatedButton(
                            onPressed: () {
+                             Register();
                              Navigator.push(
                                context,
                                MaterialPageRoute(builder: (context) => SignUpPage()),
