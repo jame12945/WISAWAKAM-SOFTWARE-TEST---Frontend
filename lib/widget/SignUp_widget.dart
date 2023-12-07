@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
+import '../views/Login_Page.dart';
 import '../views/SignUpPage_Page.dart';
 class SignUpWidget extends StatefulWidget {
 
@@ -266,10 +267,6 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                      if (_image != null)
                        Image.file(_image!),
 
-                     // ElevatedButton(
-                     //   onPressed: _uploadImage,
-                     //   child: Text('Upload Image'),
-                     // ),
 
 
                      Align(
@@ -282,7 +279,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                              // _uploadImage();
                              Navigator.push(
                                context,
-                               MaterialPageRoute(builder: (context) => SignUpPage()),
+                               MaterialPageRoute(builder: (context) => LoginPage()),
                              );
                            },
                            style: ElevatedButton.styleFrom(
