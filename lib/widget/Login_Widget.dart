@@ -13,6 +13,9 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import '../views/Login_Page.dart';
 import '../views/SignUpPage_Page.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+
 class LoginWidget extends StatefulWidget {
 
   @override
@@ -25,6 +28,13 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
   String Gettoken = '';
   TextEditingController user_username = TextEditingController();
   TextEditingController user_password = TextEditingController();
+  Future<void> _launchPhoneDialer(String phoneNumber) async {
+    if (await canLaunchUrl(phoneNumber as Uri)) {
+      await launchUrl(phoneNumber as Uri);
+    } else {
+      throw 'Could not launch $phoneNumber';
+    }
+  }
   void loginfunction() async {
     final nodeUrl = Uri.parse('http://10.0.2.2:3333/login');
     final Map<String, dynamic> UserData = {
@@ -169,6 +179,38 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                                       content:Image.asset("assets/personpic.gif",
                                         width: Get.width*0.10,
                                         height: Get.height*0.10,),
+
+                                    ),
+                                  );
+                                }
+                                else{
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(
+                                        'ไม่พบข้อมูลผู้ใช้ในระบบกรุณา สมัครสมาชิก หรือ ติดต่อผู้ดูแลระบบ',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                        onPressed:(){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder:(context)=>SignUpPage())
+                                        );
+                                       },
+
+                                            child: Text('Register')
+                                        ),
+                                        // ElevatedButton(
+                                        //   onPressed: ()=> launchUrl(Uri.parse("tel://1176")),
+                                        //   child: Text('ติดต่อผู้ดูแลระบบ'),
+                                        // ),
+
+
+
+                                      ],
 
                                     ),
                                   );

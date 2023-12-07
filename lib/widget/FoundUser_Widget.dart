@@ -12,27 +12,40 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import '../views/Login_Page.dart';
 import '../views/SignUpPage_Page.dart';
+import 'dart:typed_data';
+
 
 class FoundUserWidget extends StatefulWidget {
   final String token;
   FoundUserWidget({
     required this.token
-});
+  });
 
   @override
   FoundUserWidgetWidgetState createState() => FoundUserWidgetWidgetState();
 }
-class FoundUserWidgetWidgetState extends State<FoundUserWidget>{
+class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
+  String cleanImagePath(String imagePath) {
+    // ลบเครื่องหมายไม่ถูกต้องที่อยู่ท้ายไฟล์รูปภาพ
+    return imagePath.replaceAll('"', '');
+  }
+  String sanitizeFilePath(String originalPath) {
+    // Replace invalid characters with a safe alternative or remove them
+    String sanitizedPath = originalPath.replaceAll(RegExp(r'[^\w\s./:-]'), '');
+
+    // Replace backslashes with forward slashes
+    sanitizedPath = sanitizedPath.replaceAll('\\', '/');
+
+        return sanitizedPath;
+    }
   Future<Map<String, dynamic>> getUserInformation(String token) async {
     final response = await http.get(
       Uri.parse('http://10.0.2.2:3333/getUserInformation/$token'),
     );
 
     if (response.statusCode == 200) {
-      // แปลงข้อมูล JSON เป็น Map
       final Map<String, dynamic> data = json.decode(response.body);
 
-      // ตรวจสอบ status และดึงข้อมูลที่ต้องการ
       if (data['status'] == 'ok') {
         return {
           'status': 'ok',
@@ -53,11 +66,10 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget>{
   }
 
   @override
-
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     print('Token: ${widget.token}');
     return SingleChildScrollView(
-      physics: NeverScrollableScrollPhysics(),
+      // physics: NeverScrollableScrollPhysics(),
       child: Container(
         color: Colors.green,
         height: 1400,
@@ -66,52 +78,50 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget>{
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                margin: EdgeInsets.only(top: 130.0,right: 7),
+                margin: EdgeInsets.only(top: 130.0, right: 7),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28.0),
                   color: Colors.white,
                 ),
-                width: Get.width*0.75,
-                height: Get.height*0.8,
+                width: Get.width * 0.75,
+                height: Get.height * 0.8,
                 alignment: Alignment.topCenter,
-                child: Column(
-                  children: [
-                FutureBuilder(
-                future: getUserInformation(widget.token),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // แสดง UI ในระหว่างโหลดข้อมูล
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    // แสดง UI เมื่อเกิดข้อผิดพลาด
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    // แสดง UI เมื่อโหลดข้อมูลเสร็จสมบูรณ์
-                    final userInformation = snapshot.data?['userInformation'];
-                    return Column(
-                      children: [
-                        SizedBox(height: 40,),
-                        Text('First Name: ${userInformation?['usfname']}',style: TextStyle(fontSize: 30),),
-                        Text('Last Name: ${userInformation?['uslname']}',style: TextStyle(fontSize: 30)),
-                        Text('Citizen ID: ${userInformation?['usCitizen']}',style: TextStyle(fontSize: 30)),
-                        Text('Phone: ${userInformation?['usPhone']}',style: TextStyle(fontSize: 30)),
-                        // แสดงรูปภาพตามความต้องการ
+                child: FutureBuilder(
+                  future: getUserInformation(widget.token),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // แสดง UI ในระหว่างโหลดข้อมูล
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      // แสดง UI เมื่อเกิดข้อผิดพลาด
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      // แสดง UI เมื่อโหลดข้อมูลเสร็จสมบูรณ์
+                      final userInformation = snapshot.data?['userInformation'];
 
-                      ],
-                    );
-                  }
-                },
-              )
-                  ],
+                      // Print ค่า userInformation ทั้งหมด
+                      print('User Information: $userInformation');
+
+                      return Column(
+                        children: [
+                          Text('First Name: ${userInformation?['usfname']}'),
+                          Text('Last Name: ${userInformation?['uslname']}'),
+                          Text('Citizen ID: ${userInformation?['usCitizen']}'),
+                          Text('Phone: ${userInformation?['usPhone']}'),
+                          // แสดงรูปภาพตามความต้องการ
+                        ],
+                      );
+                    }
+                  },
                 ),
               ),
-
-
-            )
+            ),
           ],
         ),
       ),
-
     );
   }
+
+
+
 }
