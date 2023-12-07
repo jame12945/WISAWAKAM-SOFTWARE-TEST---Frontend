@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
@@ -18,10 +19,11 @@ class LoginWidget extends StatefulWidget {
 }
 
 class LoginWidgetWidgetState extends State<LoginWidget> {
+  String? alertvalue;
+  String userFirstName = '';
   TextEditingController user_username = TextEditingController();
   TextEditingController user_password = TextEditingController();
   void loginfunction() async {
-
     final nodeUrl = Uri.parse('http://10.0.2.2:3333/login');
     final Map<String, dynamic> UserData = {
       "user_username": user_username.text,
@@ -37,15 +39,40 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
     );
 
     if (response.statusCode == 200) {
-      print('Login สำเร็จ ');
-    } else {
-      print('Login ไม่สำเร็จ: ${response.statusCode}');
-    }
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData['status'] == 'ok') {
+        print('Login สำเร็จ');
+       setState(() {
+         alertvalue = 'Login สำเร็จ';
+         userFirstName = responseData['user_fname'];
+         print(alertvalue);
+       });
 
+        // ทำตามที่คุณต้องการหลังจาก Login สำเร็จ
+      } else {
+        print('Login ไม่สำเร็จ: ${responseData['message']}');
+        setState(() {
+          alertvalue = 'Login ไม่สำเร็จ';
+          print(alertvalue);
+        });
+
+        // ทำตามที่คุณต้องการหลังจาก Login ไม่สำเร็จ
+      }
+    } else {
+      print('HTTP Error ${response.statusCode}');
+      setState(() {
+        alertvalue = 'เกิดข้อผิดพลาด';
+        print(alertvalue);
+      });
+
+      // ทำตามที่คุณต้องการหลังจากเกิด HTTP Error
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
       child: Container(
         color: Colors.green,
         height: 1400,
@@ -60,11 +87,12 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                     color: Colors.white,
                   ),
                   width: Get.width*0.75,
-                  height: Get.height*0.4,
+                  height: Get.height*0.45,
                   alignment: Alignment.topCenter,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SizedBox(height:40,),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
                         child: Text(
@@ -76,7 +104,7 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 50,),
+                      SizedBox(height: 40,),
 
                       Container(
                         width: Get.width * 0.65,
@@ -125,6 +153,19 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                           child: ElevatedButton(
                             onPressed: () {
                               loginfunction();
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                if (alertvalue == 'Login สำเร็จ') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(
+                                        'ยินดีต้อนรับคุณ   $userFirstName',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              });
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => LoginPage()),
@@ -136,7 +177,7 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0)
                                 ),
-                                padding:EdgeInsets.symmetric(horizontal: 152 , vertical: 13)
+                                padding:EdgeInsets.symmetric(horizontal: 120 , vertical: 15)
 
                             ),
                             child: Text("Login",
@@ -147,6 +188,7 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                           ),
                         ),
                       ),
+
 
                     ],
                   ),
