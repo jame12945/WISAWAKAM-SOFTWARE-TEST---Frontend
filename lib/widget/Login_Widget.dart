@@ -162,6 +162,10 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                                         'ยินดีต้อนรับคุณ   $userFirstName',
                                         style: TextStyle(fontSize: 20),
                                       ),
+                                      content:Image.asset("assets/personpic.gif",
+                                        width: Get.width*0.10,
+                                        height: Get.height*0.10,),
+
                                     ),
                                   );
                                 }

@@ -114,6 +114,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
   Widget build(BuildContext context) {
     Color customColor = Color(0xCCEFEEEE);
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
        child: Container(
          color: Colors.green,
          height: 1400,
@@ -122,7 +123,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
              Align(
                alignment: Alignment.topCenter,
                child: Container(
-                 margin: EdgeInsets.only(top: 180.0),
+                 margin: EdgeInsets.only(top: 70.0),
                  decoration: BoxDecoration(
                    borderRadius: BorderRadius.circular(28.0),
                    color: Colors.white,
