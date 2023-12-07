@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:bookingapp/views/FoundUser_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +22,7 @@ class LoginWidget extends StatefulWidget {
 class LoginWidgetWidgetState extends State<LoginWidget> {
   String? alertvalue;
   String userFirstName = '';
+  String Gettoken = '';
   TextEditingController user_username = TextEditingController();
   TextEditingController user_password = TextEditingController();
   void loginfunction() async {
@@ -45,7 +47,9 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
        setState(() {
          alertvalue = 'Login สำเร็จ';
          userFirstName = responseData['user_fname'];
+         Gettoken = responseData['token'];
          print(alertvalue);
+         print(Gettoken);
        });
 
         // ทำตามที่คุณต้องการหลังจาก Login สำเร็จ
@@ -170,10 +174,15 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                                   );
                                 }
                               });
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => LoginPage()),
-                              );
+                              Future.delayed(Duration(milliseconds: 2000), () {
+                              if (alertvalue == 'Login สำเร็จ') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FoundUserPage(token:Gettoken)),
+                                );
+                              }
+                              });
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green, // สีพื้นหลังของปุ่ม
