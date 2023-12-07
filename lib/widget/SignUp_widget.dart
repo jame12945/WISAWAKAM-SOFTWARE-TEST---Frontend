@@ -17,12 +17,7 @@ class SignUpWidget extends StatefulWidget {
 }
 
 class SignUpWidgetWidgetState extends State<SignUpWidget> {
-  // String? user_username;
-  // String? user_password;
-  // String? user_fname;
-  // String? user_lname;
-  // Int? user_citizenId;
-  // String? user_phone;
+
   TextEditingController user_username = TextEditingController();
   TextEditingController user_password = TextEditingController();
   TextEditingController user_fname = TextEditingController();
@@ -67,7 +62,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('YOUR_NODEJS_SERVER_ENDPOINT'), // เปลี่ยนเป็น URL ของ Node.js server ของคุณ
+      Uri.parse('http://10.0.2.2:3333/upload'), // ปรับเปลี่ยน URL ของ Node.js server ของคุณ
     );
 
     request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
@@ -80,8 +75,9 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
       print('Failed to upload image. Status code: ${response.statusCode}');
     }
   }
-  void Register() async {
 
+  void Register() async {
+    await _uploadImage();
     final nodeUrl = Uri.parse('http://10.0.2.2:3333/register');
     final Map<String, dynamic> UserData = {
       "user_username": user_username.text,
@@ -90,7 +86,8 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
       "user_lname": user_lname.text,
       "user_citizenid":user_citizenId.text,
       "user_phone":user_phone.text ,
-      //"File": ,
+      "user_image": _image != null ? _image!.path : null,
+
 
 
     };
@@ -260,6 +257,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          ),
                        ),
                      ),
+                     SizedBox(height: 20),
                      ElevatedButton(
                        onPressed: _getImage,
                        child: Text('Choose Image'),
@@ -281,6 +279,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                          child: ElevatedButton(
                            onPressed: () {
                              Register();
+                             // _uploadImage();
                              Navigator.push(
                                context,
                                MaterialPageRoute(builder: (context) => SignUpPage()),
