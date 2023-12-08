@@ -50,6 +50,8 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
         return {
           'status': 'ok',
           'userInformation': {
+            'usUsername': data['usUsername'],
+            'usPassword': data['usPassword'],
             'usfname': data['usfname'],
             'uslname': data['uslname'],
             'usCitizen': data['usCitizen'],
@@ -104,11 +106,30 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
 
                       return Column(
                         children: [
-                          Text('First Name: ${userInformation?['usfname']}'),
-                          Text('Last Name: ${userInformation?['uslname']}'),
-                          Text('Citizen ID: ${userInformation?['usCitizen']}'),
-                          Text('Phone: ${userInformation?['usPhone']}'),
-                          // แสดงรูปภาพตามความต้องการ
+                          SizedBox(height: 60),
+                          Column(
+                            children: [
+                              Text('UserName: ${userInformation?['usUsername']}'
+                                ,style: TextStyle(fontSize: 20))
+                              ,
+                              SizedBox(height: 20),
+                              Text('Password: ${userInformation?['usPassword']}'
+                                  ,style: TextStyle(fontSize: 20)),
+                              SizedBox(height: 20),
+                              Text('ชื่อผู้ใช้: ${userInformation?['usfname']}'
+                                  ,style: TextStyle(fontSize: 20)),
+                              SizedBox(height: 20),
+                              Text('นามสกุล: ${userInformation?['uslname']}'
+                                  ,style: TextStyle(fontSize: 20)),
+                              SizedBox(height: 20),
+                              Text('เลขบัตรประชาชน: ${userInformation?['usCitizen']}'
+                                  ,style: TextStyle(fontSize: 20)),
+                              SizedBox(height: 20),
+                              Text('เบอร์ติดต่อ: ${userInformation?['usPhone']}'
+                                  ,style: TextStyle(fontSize: 20)),
+                              // แสดงรูปภาพตามความต้องการ
+                            ],
+                          ),
                         ],
                       );
                     }

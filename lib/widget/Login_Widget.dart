@@ -203,10 +203,14 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
 
                                             child: Text('Register')
                                         ),
-                                        // ElevatedButton(
-                                        //   onPressed: ()=> launchUrl(Uri.parse("tel://1176")),
-                                        //   child: Text('ติดต่อผู้ดูแลระบบ'),
-                                        // ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            final Uri url = Uri(scheme: 'tel', path: '1176');
+                                            launchUrl(url);
+                                          },
+                                          child: Text('ติดต่อผู้ดูแลระบบ'),
+                                        ),
+
 
 
 
