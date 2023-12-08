@@ -1,6 +1,4 @@
-import 'dart:ffi';
 
-import 'package:bookingapp/views/FoundUser_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -52,7 +50,9 @@ class MapWidgetWidgetState extends State<MapWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Google Maps'),
+        title: Text('Google Maps'),
+        backgroundColor: Colors.blueAccent,
+
       ),
       body: FutureBuilder(
         future: _getLocation(),

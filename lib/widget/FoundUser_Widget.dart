@@ -1,20 +1,10 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'dart:convert';
-import 'dart:io';
-import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
-import '../views/Login_Page.dart';
 import '../views/Map_Page.dart';
-import '../views/SignUpPage_Page.dart';
-import 'dart:typed_data';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 
 class FoundUserWidget extends StatefulWidget {
   final String token;
@@ -27,14 +17,12 @@ class FoundUserWidget extends StatefulWidget {
 }
 class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
   String cleanImagePath(String imagePath) {
-    // ลบเครื่องหมายไม่ถูกต้องที่อยู่ท้ายไฟล์รูปภาพ
     return imagePath.replaceAll('"', '');
   }
   String sanitizeFilePath(String originalPath) {
-    // Replace invalid characters with a safe alternative or remove them
+
     String sanitizedPath = originalPath.replaceAll(RegExp(r'[^\w\s./:-]'), '');
 
-    // Replace backslashes with forward slashes
     sanitizedPath = sanitizedPath.replaceAll('\\', '/');
 
         return sanitizedPath;
@@ -74,7 +62,7 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
     return SingleChildScrollView(
       // physics: NeverScrollableScrollPhysics(),
       child: Container(
-        color: Colors.green,
+        color: Colors.blueAccent,
         height: 1400,
         child: Stack(
           children: [
@@ -94,16 +82,15 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
                     future: getUserInformation(widget.token),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        // แสดง UI ในระหว่างโหลดข้อมูล
+
                         return CircularProgressIndicator();
                       } else if (snapshot.hasError) {
-                        // แสดง UI เมื่อเกิดข้อผิดพลาด
+
                         return Text('Error: ${snapshot.error}');
                       } else {
-                        // แสดง UI เมื่อโหลดข้อมูลเสร็จสมบูรณ์
+
                         final userInformation = snapshot.data?['userInformation'];
 
-                        // Print ค่า userInformation ทั้งหมด
                         print('User Information: $userInformation');
 
                         return Column(
@@ -129,7 +116,7 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
                                 SizedBox(height: 20),
                                 Text('เบอร์ติดต่อ: ${userInformation?['usPhone']}'
                                     ,style: TextStyle(fontSize: 20)),
-                                // แสดงรูปภาพตามความต้องการ
+
                               ],
                             ),
                           ],

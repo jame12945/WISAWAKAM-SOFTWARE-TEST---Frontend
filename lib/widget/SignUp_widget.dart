@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -13,8 +14,8 @@ import '../views/Login_Page.dart';
 import '../views/SignUpPage_Page.dart';
 class SignUpWidget extends StatefulWidget {
 
-@override
- SignUpWidgetWidgetState createState() => SignUpWidgetWidgetState();
+  @override
+  SignUpWidgetWidgetState createState() => SignUpWidgetWidgetState();
 }
 
 class SignUpWidgetWidgetState extends State<SignUpWidget> {
@@ -28,6 +29,9 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
 
 
   File? _image;
+  File? _imageFile;
+
+
   Future<void> _getImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -63,9 +67,9 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:3333/upload'), // ปรับเปลี่ยน URL ของ Node.js server ของคุณ
+      Uri.parse('http://10.0.2.2:3333/upload'),
     );
-
+    print('Image path: ${_image!.path}');
     request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
 
     var response = await request.send();
@@ -115,199 +119,200 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
     Color customColor = Color(0xCCEFEEEE);
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
-       child: Container(
-         color: Colors.green,
-         height: 1400,
-         child: Stack(
-           children: [
-             Align(
-               alignment: Alignment.topCenter,
-               child: Container(
-                 margin: EdgeInsets.only(top: 70.0),
-                 decoration: BoxDecoration(
-                   borderRadius: BorderRadius.circular(28.0),
-                   color: Colors.white,
-                 ),
-                 width: Get.width*0.75,
-                 height: Get.height*0.9,
-                 alignment: Alignment.topCenter,
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.center,
-                   children: [
-                     Padding(
-                       padding: const EdgeInsets.symmetric(vertical: 20.0),
-                       child: Text(
-                         'Register',
-                         style:TextStyle(
-                             fontSize: 28,
-                             fontWeight: FontWeight.bold
+      child: Container(
+        color: Colors.blueAccent,
+        height: 1400,
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                margin: EdgeInsets.only(top: 70.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28.0),
+                  color: Colors.white,
+                ),
+                width: Get.width*0.75,
+                height: Get.height*0.9,
+                alignment: Alignment.topCenter,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
+                      child: Text(
+                        'Register',
+                        style:TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold
 
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 20,),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20,),
 
-                     Container(
-                       width: Get.width * 0.65,
-                       child: TextFormField(
-                         style: TextStyle(
-                             color: Colors.black
-                         ),
-                         controller: user_username,
-                         decoration: InputDecoration(
-                           hintText: 'Username', // ข้อความตัวอย่างในช่องใส่ข้อความ
-                           border: OutlineInputBorder(
-                             borderRadius: BorderRadius.circular(10.0),
-                           ),
-                           filled: true,
-                           fillColor: customColor,
+                    Container(
+                      width: Get.width * 0.65,
+                      child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                        controller: user_username,
+                        decoration: InputDecoration(
+                          hintText: 'Username', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          filled: true,
+                          fillColor: customColor,
 
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 10,),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
 
-                     Container(
-                       width: Get.width * 0.65,
-                       child: TextFormField(
-                         style: TextStyle(
-                             color: Colors.black
-                         ),
-                         controller: user_password,
-                         decoration: InputDecoration(
-                             hintText: 'Password', // ข้อความตัวอย่างในช่องใส่ข้อความ
-                             border: OutlineInputBorder(
-                               borderRadius: BorderRadius.circular(10.0),
-                             ),
-                             filled: true,
-                             fillColor: customColor
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 10,),
+                    Container(
+                      width: Get.width * 0.65,
+                      child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                        controller: user_password,
+                        decoration: InputDecoration(
+                            hintText: 'Password', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: customColor
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
 
-                     Container(
-                       width: Get.width * 0.65,
-                       child: TextFormField(
-                         style: TextStyle(
-                             color: Colors.black
-                         ),
-                         controller: user_fname,
-                         decoration: InputDecoration(
-                             hintText: 'ชื่อผู้ใช้', // ข้อความตัวอย่างในช่องใส่ข้อความ
-                             border: OutlineInputBorder(
-                               borderRadius: BorderRadius.circular(10.0),
-                             ),
-                             filled: true,
-                             fillColor: customColor
-                         ),
-                       ),
-                     ),
+                    Container(
+                      width: Get.width * 0.65,
+                      child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                        controller: user_fname,
+                        decoration: InputDecoration(
+                            hintText: 'ชื่อผู้ใช้', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: customColor
+                        ),
+                      ),
+                    ),
 
-                     SizedBox(height: 10,),
+                    SizedBox(height: 10,),
 
-                     Container(
-                       width: Get.width * 0.65,
-                       child: TextFormField(
-                         style: TextStyle(
-                             color: Colors.black
-                         ),
-                           controller:user_lname,
-                         decoration: InputDecoration(
-                             hintText: 'นามสกุล', // ข้อความตัวอย่างในช่องใส่ข้อความ
-                             border: OutlineInputBorder(
-                               borderRadius: BorderRadius.circular(10.0),
-                             ),
-                             filled: true,
-                             fillColor: customColor
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 10,),
-                     Container(
-                       width: Get.width * 0.65,
-                       child: TextFormField(
-                         style: TextStyle(
-                             color: Colors.black
-                         ),
-                         controller:user_citizenId,
-                         decoration: InputDecoration(
-                             hintText: 'เลขบัตรประชาชน', // ข้อความตัวอย่างในช่องใส่ข้อความ
-                             border: OutlineInputBorder(
-                               borderRadius: BorderRadius.circular(10.0),
-                             ),
-                             filled: true,
-                             fillColor: customColor
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 10,),
-                     Container(
-                       width: Get.width * 0.65,
-                       child: TextFormField(
-                         style: TextStyle(
-                             color: Colors.black
-                         ),
-                         controller:user_phone,
-                         decoration: InputDecoration(
-                             hintText: 'เบอร์ติดต่อ', // ข้อความตัวอย่างในช่องใส่ข้อความ
-                             border: OutlineInputBorder(
-                               borderRadius: BorderRadius.circular(10.0),
-                             ),
-                             filled: true,
-                             fillColor: customColor
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 20),
-                     ElevatedButton(
-                       onPressed: _getImage,
-                       child: Text('Choose Image'),
-                     ),
-
-                     if (_image != null)
-                       Image.file(_image!),
+                    Container(
+                      width: Get.width * 0.65,
+                      child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                        controller:user_lname,
+                        decoration: InputDecoration(
+                            hintText: 'นามสกุล', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: customColor
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      width: Get.width * 0.65,
+                      child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                        controller:user_citizenId,
+                        decoration: InputDecoration(
+                            hintText: 'เลขบัตรประชาชน', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: customColor
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      width: Get.width * 0.65,
+                      child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                        controller:user_phone,
+                        decoration: InputDecoration(
+                            hintText: 'เบอร์ติดต่อ', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: customColor
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _getImage,
+                      child: Text('Choose Image'),
+                    ),
 
 
+                    if (_image != null)
+                      Image.file(_image!),
 
-                     Align(
-                       alignment: Alignment.topCenter,
-                       child: Container(
-                         margin: EdgeInsets.only(top: 30.0),
-                         child: ElevatedButton(
-                           onPressed: () {
-                             Register();
-                             // _uploadImage();
-                             Navigator.push(
-                               context,
-                               MaterialPageRoute(builder: (context) => LoginPage()),
-                             );
-                           },
-                           style: ElevatedButton.styleFrom(
-                               backgroundColor: Colors.green, // สีพื้นหลังของปุ่ม
-                               foregroundColor: Colors.white, // สีของข้อความ
-                               shape: RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.circular(10.0)
-                               ),
-                               padding:EdgeInsets.symmetric(horizontal: 152 , vertical: 13)
 
-                           ),
-                           child: Text("Save",
-                             style: TextStyle(
-                                 fontSize: 20
-                             ),
-                           ),
-                         ),
-                       ),
-                     ),
 
-                   ],
-                 ),
-               ),
-             ),
-           ],
-         ),
-       ),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        margin: EdgeInsets.only(top: 30.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Register();
+                            // _uploadImage();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginPage()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green, // สีพื้นหลังของปุ่ม
+                              foregroundColor: Colors.white, // สีของข้อความ
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              padding:EdgeInsets.symmetric(horizontal: 152 , vertical: 13)
+
+                          ),
+                          child: Text("Save",
+                            style: TextStyle(
+                                fontSize: 20
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,17 +1,9 @@
-import 'dart:ffi';
-
 import 'package:bookingapp/views/FoundUser_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'dart:convert';
-import 'dart:io';
-import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
-import '../views/Login_Page.dart';
 import '../views/SignUpPage_Page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -88,7 +80,7 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
       child: Container(
-        color: Colors.green,
+        color: Colors.blueAccent,
         height: 1400,
         child: Stack(
             children: [
@@ -128,7 +120,7 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
                           ),
                           controller: user_username,
                           decoration: InputDecoration(
-                            hintText: 'Username', // ข้อความตัวอย่างในช่องใส่ข้อความ
+                            hintText: 'Username',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
