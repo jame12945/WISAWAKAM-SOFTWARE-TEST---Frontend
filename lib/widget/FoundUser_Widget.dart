@@ -11,9 +11,10 @@ import 'dart:io';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import '../views/Login_Page.dart';
+import '../views/Map_Page.dart';
 import '../views/SignUpPage_Page.dart';
 import 'dart:typed_data';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FoundUserWidget extends StatefulWidget {
   final String token;
@@ -88,52 +89,68 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
                 width: Get.width * 0.75,
                 height: Get.height * 0.8,
                 alignment: Alignment.topCenter,
-                child: FutureBuilder(
-                  future: getUserInformation(widget.token),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // แสดง UI ในระหว่างโหลดข้อมูล
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      // แสดง UI เมื่อเกิดข้อผิดพลาด
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      // แสดง UI เมื่อโหลดข้อมูลเสร็จสมบูรณ์
-                      final userInformation = snapshot.data?['userInformation'];
+                child: Stack(
+                  children:[ FutureBuilder(
+                    future: getUserInformation(widget.token),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        // แสดง UI ในระหว่างโหลดข้อมูล
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        // แสดง UI เมื่อเกิดข้อผิดพลาด
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        // แสดง UI เมื่อโหลดข้อมูลเสร็จสมบูรณ์
+                        final userInformation = snapshot.data?['userInformation'];
 
-                      // Print ค่า userInformation ทั้งหมด
-                      print('User Information: $userInformation');
+                        // Print ค่า userInformation ทั้งหมด
+                        print('User Information: $userInformation');
 
-                      return Column(
-                        children: [
-                          SizedBox(height: 60),
-                          Column(
-                            children: [
-                              Text('UserName: ${userInformation?['usUsername']}'
-                                ,style: TextStyle(fontSize: 20))
-                              ,
-                              SizedBox(height: 20),
-                              Text('Password: ${userInformation?['usPassword']}'
-                                  ,style: TextStyle(fontSize: 20)),
-                              SizedBox(height: 20),
-                              Text('ชื่อผู้ใช้: ${userInformation?['usfname']}'
-                                  ,style: TextStyle(fontSize: 20)),
-                              SizedBox(height: 20),
-                              Text('นามสกุล: ${userInformation?['uslname']}'
-                                  ,style: TextStyle(fontSize: 20)),
-                              SizedBox(height: 20),
-                              Text('เลขบัตรประชาชน: ${userInformation?['usCitizen']}'
-                                  ,style: TextStyle(fontSize: 20)),
-                              SizedBox(height: 20),
-                              Text('เบอร์ติดต่อ: ${userInformation?['usPhone']}'
-                                  ,style: TextStyle(fontSize: 20)),
-                              // แสดงรูปภาพตามความต้องการ
-                            ],
-                          ),
-                        ],
-                      );
-                    }
-                  },
+                        return Column(
+                          children: [
+                            SizedBox(height: 60),
+                            Column(
+                              children: [
+                                Text('UserName: ${userInformation?['usUsername']}'
+                                  ,style: TextStyle(fontSize: 20))
+                                ,
+                                SizedBox(height: 20),
+                                Text('Password: ${userInformation?['usPassword']}'
+                                    ,style: TextStyle(fontSize: 20)),
+                                SizedBox(height: 20),
+                                Text('ชื่อผู้ใช้: ${userInformation?['usfname']}'
+                                    ,style: TextStyle(fontSize: 20)),
+                                SizedBox(height: 20),
+                                Text('นามสกุล: ${userInformation?['uslname']}'
+                                    ,style: TextStyle(fontSize: 20)),
+                                SizedBox(height: 20),
+                                Text('เลขบัตรประชาชน: ${userInformation?['usCitizen']}'
+                                    ,style: TextStyle(fontSize: 20)),
+                                SizedBox(height: 20),
+                                Text('เบอร์ติดต่อ: ${userInformation?['usPhone']}'
+                                    ,style: TextStyle(fontSize: 20)),
+                                // แสดงรูปภาพตามความต้องการ
+                              ],
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                    Container(
+                      margin: EdgeInsets.only(top: 820.0, left: 130),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MapPage()),
+                          );
+                        },
+                        child: Icon(Icons.near_me),
+                      ),
+                    )
+
+                  ]
                 ),
               ),
             ),
