@@ -138,7 +138,7 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
                     },
                   ),
                     Container(
-                      margin: EdgeInsets.only(top: 820.0, left: 130),
+                      margin: EdgeInsets.only(top: 820.0, left: 115),
                       child: FloatingActionButton(
                         onPressed: () {
                           Navigator.push(
