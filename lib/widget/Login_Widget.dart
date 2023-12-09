@@ -54,7 +54,6 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
          print(Gettoken);
        });
 
-        // ทำตามที่คุณต้องการหลังจาก Login สำเร็จ
       } else {
         print('Login ไม่สำเร็จ: ${responseData['message']}');
         setState(() {
@@ -62,7 +61,7 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
           print(alertvalue);
         });
 
-        // ทำตามที่คุณต้องการหลังจาก Login ไม่สำเร็จ
+
       }
     } else {
       print('HTTP Error ${response.statusCode}');
@@ -71,7 +70,6 @@ class LoginWidgetWidgetState extends State<LoginWidget> {
         print(alertvalue);
       });
 
-      // ทำตามที่คุณต้องการหลังจากเกิด HTTP Error
     }
   }
 
