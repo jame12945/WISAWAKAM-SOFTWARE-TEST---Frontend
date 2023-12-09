@@ -30,59 +30,62 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
 
   File? _image;
   File? _imageFile;
+  String storagepic ='';
+  final ImagePicker  _picker = ImagePicker();
 
-
-  Future<void> _getImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      // ลดขนาดรูปภาพ
-      final File reducedImage = await _reduceImageSize(pickedFile.path);
-      setState(() {
-        _image = reducedImage;
-      });
-    }
+  void _pickImageBase64() async{
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if(image == null) return;
+    Uint8List imagebyte = await image!.readAsBytes();
+    String _base64 = base64Encode(imagebyte);
+    // print(_base64);
+    final imagetempath = File(image.path);
+    print(imagetempath);
+    final File reducedImage = await _reduceImageSize(imagetempath.path);
+    setState(() {
+      this._imageFile = reducedImage;
+      storagepic = _base64;
+    });
+    print('storagepic =>'+storagepic);
   }
+
 
   Future<File> _reduceImageSize(String imagePath) async {
     final File imageFile = File(imagePath);
     final img.Image originalImage = img.decodeImage(imageFile.readAsBytesSync())!;
 
-    // กำหนดขนาดที่ต้องการ (300x300)
     final img.Image reducedImage = img.copyResize(originalImage, width: 300, height: 300);
 
-    // บันทึกรูปภาพที่ลดขนาดลง
     final tempDir = await getTemporaryDirectory();
     final File reducedFile = File('${tempDir.path}/reduced_image.jpg');
     reducedFile.writeAsBytesSync(img.encodeJpg(reducedImage));
 
     return reducedFile;
   }
-
-  Future<void> _uploadImage() async {
-    if (_image == null) {
-      return;
-    }
-
-    var request = http.MultipartRequest(
-      'POST',
+  Future<void> _uploadBase64Image(String base64Image) async {
+    // backup
+    print('inside _uploadBase64Image!!!!');
+    print('base64Image...');
+    print(base64Image);
+    var response = await http.post(
       Uri.parse('http://10.0.2.2:3333/upload'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'image': base64Image}),
     );
-    print('Image path: ${_image!.path}');
-    request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
-
-    var response = await request.send();
 
     if (response.statusCode == 200) {
-      print('Image uploaded successfully!');
+      print('Base64 Image uploaded successfully!  Status code: ${response.statusCode}');
     } else {
-      print('Failed to upload image. Status code: ${response.statusCode}');
+      print('Failed to upload base64 image. Status code: ${response.statusCode}');
     }
+
   }
 
+
   void Register() async {
-    await _uploadImage();
+    await _uploadBase64Image(storagepic);
     final nodeUrl = Uri.parse('http://10.0.2.2:3333/register');
     final Map<String, dynamic> UserData = {
       "user_username": user_username.text,
@@ -91,8 +94,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
       "user_lname": user_lname.text,
       "user_citizenid":user_citizenId.text,
       "user_phone":user_phone.text ,
-      "user_image": _image != null ? _image!.path : null,
-
+      "user_imagebase":storagepic,
 
 
     };
@@ -106,7 +108,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
     );
 
     if (response.statusCode == 200) {
-      // บันทึกข้อมูลสำเร็จ
+
 
       print('Register สำเร็จ ');
     } else {
@@ -138,6 +140,7 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(height: 20,),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20.0),
                       child: Text(
@@ -264,14 +267,17 @@ class SignUpWidgetWidgetState extends State<SignUpWidget> {
                       ),
                     ),
                     SizedBox(height: 20),
+
                     ElevatedButton(
-                      onPressed: _getImage,
+                      onPressed: (){
+                        _pickImageBase64();
+                      },
                       child: Text('Choose Image'),
                     ),
 
 
-                    if (_image != null)
-                      Image.file(_image!),
+                    if (_imageFile != null)
+                      Image.file(_imageFile!),
 
 
 

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -16,17 +18,8 @@ class FoundUserWidget extends StatefulWidget {
   FoundUserWidgetWidgetState createState() => FoundUserWidgetWidgetState();
 }
 class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
-  String cleanImagePath(String imagePath) {
-    return imagePath.replaceAll('"', '');
-  }
-  String sanitizeFilePath(String originalPath) {
 
-    String sanitizedPath = originalPath.replaceAll(RegExp(r'[^\w\s./:-]'), '');
 
-    sanitizedPath = sanitizedPath.replaceAll('\\', '/');
-
-        return sanitizedPath;
-    }
   Future<Map<String, dynamic>> getUserInformation(String token) async {
     final response = await http.get(
       Uri.parse('http://10.0.2.2:3333/getUserInformation/$token'),
@@ -46,6 +39,7 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
             'usCitizen': data['usCitizen'],
             'usPhone': data['usPhone'],
             'usImage': data['usImage'],
+            'usImagebase':data['usImagebase'],
           },
         };
       } else {
@@ -53,6 +47,17 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
       }
     } else {
       throw Exception('Failed to load user information');
+    }
+  }
+  Widget buildImageWidget(String? base64String) {
+    if (base64String != null && base64String.isNotEmpty) {
+      final Uint8List bytes = base64.decode(base64String);
+      return Image.memory(bytes, width: 290);
+    } else {
+      return Image.asset(
+        'assets/user.png',
+        width: 290,
+      );
     }
   }
 
@@ -99,23 +104,28 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
                             Column(
                               children: [
                                 Text('UserName: ${userInformation?['usUsername']}'
-                                  ,style: TextStyle(fontSize: 20))
+                                  ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600))
                                 ,
                                 SizedBox(height: 20),
                                 Text('Password: ${userInformation?['usPassword']}'
-                                    ,style: TextStyle(fontSize: 20)),
+                                    ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600)),
                                 SizedBox(height: 20),
                                 Text('ชื่อผู้ใช้: ${userInformation?['usfname']}'
-                                    ,style: TextStyle(fontSize: 20)),
+                                    ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600)),
                                 SizedBox(height: 20),
                                 Text('นามสกุล: ${userInformation?['uslname']}'
-                                    ,style: TextStyle(fontSize: 20)),
+                                    ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600)),
                                 SizedBox(height: 20),
                                 Text('เลขบัตรประชาชน: ${userInformation?['usCitizen']}'
-                                    ,style: TextStyle(fontSize: 20)),
+                                    ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600)),
                                 SizedBox(height: 20),
                                 Text('เบอร์ติดต่อ: ${userInformation?['usPhone']}'
-                                    ,style: TextStyle(fontSize: 20)),
+                                    ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600)),
+                                SizedBox(height: 80),
+                                Image.asset('assets/user.png',
+                                width: 290,),
+                                // SizedBox(height: 80),
+                                // buildImageWidget(userInformation?['usImagebase']),
 
                               ],
                             ),
@@ -125,7 +135,7 @@ class FoundUserWidgetWidgetState extends State<FoundUserWidget> {
                     },
                   ),
                     Container(
-                      margin: EdgeInsets.only(top: 820.0, left: 115),
+                      margin: EdgeInsets.only(top: 820.0, left: 120),
                       child: FloatingActionButton(
                         onPressed: () {
                           Navigator.push(
