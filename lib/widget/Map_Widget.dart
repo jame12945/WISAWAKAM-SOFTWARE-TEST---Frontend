@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,39 +14,22 @@ class MapWidget extends StatefulWidget {
 }
 
 class MapWidgetWidgetState extends State<MapWidget> {
+  final Completer<GoogleMapController> _controller =
+  Completer<GoogleMapController>();
 
-  late Position userLocation;
-  late GoogleMapController mapController;
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+  static const CameraPosition Mylocation = CameraPosition(
+      bearing: 192.8334901395799,
+      target: LatLng(13.772263, 100.583822),
+      tilt: 59.440717697143555,
+      zoom: 19.151926040649414);
+  static final Marker _Mylocation = Marker(
+    markerId: MarkerId('_Mylocation'),
+    infoWindow: InfoWindow(title: 'ตึก B1 คอนโดลุมพีนีวิลล์ ศูนย์วัฒนธรรม'),
+    icon: BitmapDescriptor.defaultMarker,
+    position:  LatLng(13.772263, 100.583822),
 
-  Future<Position> _getLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    userLocation = await Geolocator.getCurrentPosition();
-    return userLocation;
-  }
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -54,47 +39,24 @@ class MapWidgetWidgetState extends State<MapWidget> {
         backgroundColor: Colors.blueAccent,
 
       ),
-      body: FutureBuilder(
-        future: _getLocation(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return GoogleMap(
-              mapType: MapType.normal,
-              onMapCreated: _onMapCreated,
-              myLocationEnabled: true,
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(userLocation.latitude, userLocation.longitude),
-                  zoom: 15),
-            );
-          } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                ],
-              ),
-            );
-          }
+      body: GoogleMap(
+        mapType: MapType.normal,
+        markers: {_Mylocation},
+        initialCameraPosition: Mylocation,
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          mapController.animateCamera(CameraUpdate.newLatLngZoom(
-              LatLng(userLocation.latitude, userLocation.longitude), 18));
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(
-                    'Your location has been send !\nlat: ${userLocation.latitude} long: ${userLocation.longitude} '),
-              );
-            },
-          );
-        },
-        label: Text("Send Location"),
-        icon: Icon(Icons.near_me),
+        onPressed: _goToTheLake,
+        label: const Text('To My Location!'),
+        icon: const Icon(Icons.house),
       ),
     );
+  }
+
+  Future<void> _goToTheLake() async {
+    final GoogleMapController controller = await _controller.future;
+    await controller.animateCamera(CameraUpdate.newCameraPosition(Mylocation));
   }
 }
